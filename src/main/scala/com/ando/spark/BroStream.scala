@@ -41,8 +41,8 @@ object BroStream extends StreamUtils {
 
     def main(args: Array[String]): Unit = {
       val kafkaUrl = "localhost:9092"
-      val shemaRegistryURL = "http://192.168.30.19:8081"
-      val topic ="bero"
+      val shemaRegistryURL = "http://10.252.108.232:8081"
+      val topic ="bro"
 
       val spark = getSparkSession(args)
       import spark.implicits._
@@ -126,13 +126,13 @@ object BroStream extends StreamUtils {
           .writeStream
 //        .format("console")
 //        .option("truncate", "false")
-//        .outputMode("update")
+          .outputMode("append")
 //        .start()
 //        .awaitTermination()
 
         .foreach(new ForeachWriter[ConnCountObj] {
 
-          val writeConfig: WriteConfig = WriteConfig(Map("uri" -> "mongodb://localhost/spark.bero"))
+          val writeConfig: WriteConfig = WriteConfig(Map("uri" -> "mongodb://localhost/spark.broisot"))
           var mongoConnector: MongoConnector = _
           var ConnCounts: mutable.ArrayBuffer[ConnCountObj] = _
 
@@ -179,15 +179,15 @@ object BroStream extends StreamUtils {
         }).start()
 
 
-      val parsedRawToHDFSQuery = parsedLogData
-        .writeStream
-        .option("checkpointLocation", "hdfs://lcoalhost:9000/checkpoint/stream/bro")
-        .option("path","hdfs://localhost:9000/input/spark/stream/bro")
-        .outputMode("append")
-        .format("json")
-        .start()
+//      val parsedRawToHDFSQuery = parsedLogData
+//        .writeStream
+//        .option("checkpointLocation", "hdfs://lcoalhost:9000/checkpoint/stream/bro")
+//        .option("path","hdfs://localhost:9000/input/spark/stream/bro")
+//        .outputMode("append")
+//        .format("json")
+//        .start()
 
       ConnCountQuery.awaitTermination()
-      parsedRawToHDFSQuery.awaitTermination()
+//      parsedRawToHDFSQuery.awaitTermination()
     }
 }
